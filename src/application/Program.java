@@ -59,7 +59,8 @@ public class Program {
 				
 				switch (number) {
 				case 1: {
-					listEmployees(list);
+					System.out.println();
+					System.out.println("Pressione enter para continuar");
 					sc.nextLine();
 					break;
 				}
@@ -123,12 +124,6 @@ public class Program {
 		}
 		
 		sc.close();
-	}
-	
-	public static void listEmployees(List<Employees> l) {
-		l.forEach(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
 	}
 	
 	public static void SalaryMax(List<Employees> l, double salary) {

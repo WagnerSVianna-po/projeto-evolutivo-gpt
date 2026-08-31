@@ -1,8 +1,14 @@
 package model.dao.impl;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import db.DB;
+import db.DbException;
 import model.dao.EmployeesDao;
 import model.entities.Employees;
 
@@ -16,8 +22,31 @@ public class EmployeesDaoJDBC implements EmployeesDao {
 
 	@Override
 	public List<Employees> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM employees ORDER BY name");
+			
+			rs = st.executeQuery();
+			
+			List<Employees> list = new ArrayList<>();
+			
+			while (rs.next()) {
+				Employees emp = new Employees();
+				emp.setName(rs.getString("name"));
+				emp.setEmail(rs.getString("email"));
+				emp.setSalary(rs.getDouble("salary"));
+				list.add(emp);
+			}
+			return list;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
 	}
 
 	@Override
