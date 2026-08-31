@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Scanner;
 
-import entities.Employees;
+import model.entities.Employees;
 
-public class Exercicio1 {
+public class Program {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 

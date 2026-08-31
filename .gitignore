@@ -10,3 +10,5 @@ bin/
 .classpath
 .project
 
+# Configurações locais do banco de dados
+db.properties
