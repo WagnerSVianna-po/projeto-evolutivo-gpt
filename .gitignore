@@ -1,3 +1,4 @@
+
 # Arquivos compilados do Java
 bin/
 *.class
@@ -8,3 +9,4 @@ bin/
 # Arquivos específicos do Eclipse
 .classpath
 .project
+
