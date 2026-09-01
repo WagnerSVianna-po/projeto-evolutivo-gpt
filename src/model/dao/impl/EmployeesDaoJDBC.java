@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mysql.cj.protocol.Resultset;
 
 import db.DB;
 import db.DbException;
@@ -52,19 +55,83 @@ public class EmployeesDaoJDBC implements EmployeesDao {
 
 	@Override
 	public void insert(Employees obj) {
-		// TODO Auto-generated method stub
-		
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(
+					"INSERT INTO employees (name, email, salary) "
+					+ "VALUES "
+					+ "(?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDouble(3, obj.getSalary());
+			
+			int rows = st.executeUpdate();
+			
+			if(rows > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					obj.setId(id);
+				}
+				DB.closeResultSet(rs);
+			} else {
+				throw new DbException("Unexpected error! No rows affected!");
+			}
+		} 
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
 	public void update(Employees obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
 		
+		try {
+			st = conn.prepareStatement(
+					"UPDATE employees SET "
+					+ "name = ?, email = ?, salary = ? "
+					+ "WHERE id = ?");
+			
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDouble(3, obj.getSalary());
+			st.setInt(4, obj.getId());
+			
+			st.executeUpdate();
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"DELETE FROM employees "
+					+ "WHERE id = ?");
+			
+			st.setInt(1, id);
+			
+			st.executeUpdate();
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
