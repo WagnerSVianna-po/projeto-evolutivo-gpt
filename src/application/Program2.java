@@ -12,8 +12,12 @@ public class Program2 {
 
 		EmployeesDao employeesDao = DaoFactory.createEmployeesDao();
 		
+		
+		System.out.println("=== TEST 1: employees listAll ===");
 		List<Employees> list = employeesDao.findAll();
 		list.forEach(System.out::println);
+		
+		System.out.println("=== TEST 2: employees findById ===");
 	}
 
 }

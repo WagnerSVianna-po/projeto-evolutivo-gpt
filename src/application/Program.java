@@ -1,12 +1,5 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -14,116 +7,109 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Scanner;
 
+import model.dao.DaoFactory;
+import model.dao.EmployeesDao;
 import model.entities.Employees;
 
 public class Program {
 
-	public static void main(String[] args) throws FileNotFoundException, IOException {
+	public static void main(String[] args) {
 
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 		
-		String path = "C:\\temp\\in.txt";
+		int number = 1;
 		
-		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
+		while (number != 0) {
 			
-			List<Employees> list = new ArrayList<>();
+			System.out.print("Escolha uma opção \n"
+					+ "1 - listar funcionarios\n"
+					+ "2 - Funcionarios acima de um valor\n"
+					+ "3 - Procurar funcionario por e-mail\n"
+					+ "4 - Mostrar maior salario\n"
+					+ "5 - Mostrar média salarial\n"
+					+ "6 - Mostrar soma dos salarios\n"
+					+ "7 - Mostras funcionarios em ordem alfabética\n"
+					+ "8 - Mostrar funcionários por salário (maior para menor)\n"
+					+ "9 - Mostrar apenas emails\n"
+					+ "0 - Encerrar\n"
+					+ "Opção: ");
+
+			number = sc.nextInt();
+			sc.nextLine();
+			System.out.println();
 			
-			String line = br.readLine();
-			while(line != null) {
-				String[] fields = line.split(",");
-				list.add(new Employees(fields[0], fields[1], Double.parseDouble(fields[2])));
-				line = br.readLine();
-			}
-			
-			int number = 1;
-			
-			while (number != 0) {
-				
-				System.out.print("Escolha uma opção \n"
-						+ "1 - listar funcionarios\n"
-						+ "2 - Funcionarios acima de um valor\n"
-						+ "3 - Procurar funcionario por e-mail\n"
-						+ "4 - Mostrar maior salario\n"
-						+ "5 - Mostrar média salarial\n"
-						+ "6 - Mostrar soma dos salarios\n"
-						+ "7 - Mostras funcionarios em ordem alfabética\n"
-						+ "8 - Mostrar funcionários por salário (maior para menor)\n"
-						+ "9 - Mostrar apenas emails\n"
-						+ "0 - Encerrar\n"
-						+ "Opção: ");
-	
-				number = sc.nextInt();
-				sc.nextLine();
+			switch (number) {
+			case 1: {
+				listEmployees().forEach(System.out::println);;
 				System.out.println();
-				
-				switch (number) {
-				case 1: {
-					System.out.println();
-					System.out.println("Pressione enter para continuar");
-					sc.nextLine();
-					break;
-				}
-				case 2: {
-					System.out.print("Informe o salario: ");
-					double salary = sc.nextDouble();
-					System.out.println();
-					SalaryMax(list, salary);
-					sc.nextLine();
-					sc.nextLine();
-					break;
-				}
-				case 3: {
-					System.out.print("Informe o email: ");
-					String email = sc.nextLine();
-					System.out.println();
-					SearchEmail(list, email);
-					sc.nextLine();
-					break;
-				}
-				case 4: {
-					MaxSalary(list);
-					sc.nextLine();
-					break;
-				}
-				case 5: {
-					AvarageSalary(list);
-					sc.nextLine();
-					break;
-				}
-				case 6: {
-					SumSalarys(list);
-					sc.nextLine();
-					break;
-				}
-				case 7: {
-					OrdenedEmployees(list);
-					sc.nextLine();
-					break;
-				}
-				case 8: {
-					OrdenedSalary(list);
-					sc.nextLine();
-					break;
-				}
-				case 9: {
-					Emails(list);
-					sc.nextLine();
-					break;
-				}
-				case 0: {
-					System.out.println("Programa encerrado!");
-					break;
-				}
-				default:
-					System.out.println("Numero invalido.");
-				}
+				System.out.println("Pressione enter para continuar");
+				sc.nextLine();
+				break;
 			}
-		} catch (IOException e) {
-			System.out.println("Erro: " + e.getMessage());
+			case 2: {
+				System.out.print("Informe o salario: ");
+				double salary = sc.nextDouble();
+				System.out.println();
+				SalaryMax(listEmployees(), salary);
+				sc.nextLine();
+				sc.nextLine();
+				break;
+			}
+			case 3: {
+				System.out.print("Informe o email: ");
+				String email = sc.nextLine();
+				System.out.println();
+				SearchEmail(listEmployees(), email);
+				sc.nextLine();
+				break;
+			}
+			case 4: {
+				MaxSalary(listEmployees());
+				sc.nextLine();
+				break;
+			}
+			case 5: {
+				AvarageSalary(listEmployees());
+				sc.nextLine();
+				break;
+			}
+			case 6: {
+				SumSalarys(listEmployees());
+				sc.nextLine();
+				break;
+			}
+			case 7: {
+				OrdenedEmployees(listEmployees());
+				sc.nextLine();
+				break;
+			}
+			case 8: {
+				OrdenedSalary(listEmployees());
+				sc.nextLine();
+				break;
+			}
+			case 9: {
+				Emails(listEmployees());
+				sc.nextLine();
+				break;
+			}
+			case 0: {
+				System.out.println("Programa encerrado!");
+				break;
+			}
+			default:
+				System.out.println("Numero invalido.");
+			}
 		}
 		
 		sc.close();
+	}
+	
+	public static List<Employees> listEmployees() {
+		EmployeesDao empDao = DaoFactory.createEmployeesDao();
+		List<Employees> list = empDao.findAll();
+		return list;
 	}
 	
 	public static void SalaryMax(List<Employees> l, double salary) {
