@@ -18,6 +18,9 @@ public class Program2 {
 		list.forEach(System.out::println);
 		
 		System.out.println("=== TEST 2: employees findById ===");
+		Employees emp = employeesDao.findById(1);
+		System.out.println(emp);
+		
 	}
 
 }

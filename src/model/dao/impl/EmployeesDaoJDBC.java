@@ -33,6 +33,7 @@ public class EmployeesDaoJDBC implements EmployeesDao {
 			
 			while (rs.next()) {
 				Employees emp = new Employees();
+				emp.setId(rs.getInt("id"));
 				emp.setName(rs.getString("name"));
 				emp.setEmail(rs.getString("email"));
 				emp.setSalary(rs.getDouble("salary"));
@@ -69,8 +70,32 @@ public class EmployeesDaoJDBC implements EmployeesDao {
 
 	@Override
 	public Employees findById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM employees WHERE id = ?");
+			st.setInt(1, id);
+			
+			rs = st.executeQuery();
+			
+			if (rs.next()) {
+				Employees emp = new Employees();
+				
+				emp.setId(rs.getInt("id"));
+				emp.setName(rs.getString("name"));
+				emp.setEmail(rs.getString("email"));
+				emp.setSalary(rs.getDouble("salary"));
+				return emp;
+			}
+			return null;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
 	}
 
 }

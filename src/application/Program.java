@@ -173,7 +173,7 @@ public class Program {
 	
 	public static void OrdenedSalary (List<Employees> l) {
 		List<Employees> salaryOrdened = l.stream().
-				sorted(Comparator.reverseOrder()).
+				sorted(Comparator.comparing(Employees::getSalary).reversed()).
 				toList();
 		
 		salaryOrdened.forEach(System.out::println);
