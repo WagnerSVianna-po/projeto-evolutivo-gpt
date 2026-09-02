@@ -11,12 +11,17 @@ import model.dao.DaoFactory;
 import model.dao.EmployeesDao;
 import model.entities.Employees;
 
-public class Program {
+public class ListEmployee {
+	
+	private Scanner sc;
+	
+	public ListEmployee(Scanner sc) {
+		this.sc = sc;
+	}
 
-	public static void main(String[] args) {
+	public void listEmp() {
 
 		Locale.setDefault(Locale.US);
-		Scanner sc = new Scanner(System.in);
 		
 		int number = 1;
 		
@@ -95,7 +100,6 @@ public class Program {
 				break;
 			}
 			case 0: {
-				System.out.println("Programa encerrado!");
 				break;
 			}
 			default:
@@ -103,7 +107,6 @@ public class Program {
 			}
 		}
 		
-		sc.close();
 	}
 	
 	public static List<Employees> listEmployees() {

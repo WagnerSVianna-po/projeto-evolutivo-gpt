@@ -7,7 +7,7 @@ import model.dao.DaoFactory;
 import model.dao.EmployeesDao;
 import model.entities.Employees;
 
-public class Program2 {
+public class Teste {
 
 	public static void main(String[] args) {
 
