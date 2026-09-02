@@ -22,7 +22,6 @@ public class Teste {
 		System.out.println("=== TEST 2: employees findById ===");
 		Employees emp = employeesDao.findById(1);
 		System.out.println(emp);
-		
 		/** COMENTADO PARA NÃO RODAR SEMPRE
 		System.out.println("=== TEST 3: employees Insert ===");
 		emp = new Employees(null, "Levi", "levi@gmail.com", 1500.00);
