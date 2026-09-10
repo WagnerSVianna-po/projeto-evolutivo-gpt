@@ -1,29 +1,27 @@
 package application;
 
-import java.util.Comparator;
+
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Scanner;
 
-import model.dao.DaoFactory;
-import model.dao.EmployeesDao;
 import model.entities.Employees;
+import service.EmployeeService;
 
 public class ListEmployee {
 	
 	private Scanner sc;
+	private EmployeeService empServ = new EmployeeService();
 	
 	public ListEmployee(Scanner sc) {
 		this.sc = sc;
 	}
 
 	public void listEmp() {
-
-		Locale.setDefault(Locale.US);
 		
-		int number = 1;
+		empServ.refreshList();
+ 		int number = 1;
 		
 		while (number != 0) {
 			
@@ -46,7 +44,7 @@ public class ListEmployee {
 			
 			switch (number) {
 			case 1: {
-				listEmployees().forEach(System.out::println);;
+				empServ.listEmployees().forEach(System.out::println);;
 				System.out.println();
 				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
@@ -56,7 +54,10 @@ public class ListEmployee {
 				System.out.print("Informe o salario: ");
 				double salary = sc.nextDouble();
 				System.out.println();
-				SalaryMax(listEmployees(), salary);
+				List<Employees> list = empServ.SalaryMax(salary);
+				list.forEach(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				sc.nextLine();
 				break;
@@ -65,37 +66,59 @@ public class ListEmployee {
 				System.out.print("Informe o email: ");
 				String email = sc.nextLine();
 				System.out.println();
-				SearchEmail(listEmployees(), email);
+				Optional<Employees> empEmail = empServ.SearchEmail(email);
+				empEmail.ifPresent(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
 			case 4: {
-				MaxSalary(listEmployees());
+				Optional<Employees> maxSalary = empServ.MaxSalary();
+				maxSalary.ifPresent(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
 			case 5: {
-				AvarageSalary(listEmployees());
+				OptionalDouble avgSalary = empServ.AvarageSalary();
+				avgSalary.ifPresent(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
 			case 6: {
-				SumSalarys(listEmployees());
+				double sumSalary = empServ.SumSalarys();
+				System.out.print("Soma dos salarios: ");
+				System.out.println(sumSalary);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
 			case 7: {
-				OrdenedEmployees(listEmployees());
+				List<Employees> namesOrdened = empServ.OrdenedEmployees();
+				namesOrdened.forEach(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
 			case 8: {
-				OrdenedSalary(listEmployees());
+				List<Employees> salaryOrdened = empServ.OrdenedSalary();
+				salaryOrdened.forEach(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
 			case 9: {
-				Emails(listEmployees());
+				List<String> emails = empServ.Emails();
+				emails.forEach(System.out::println);
+				System.out.println();
+				System.out.println("Pressione enter para continuar");
 				sc.nextLine();
 				break;
 			}
@@ -108,90 +131,4 @@ public class ListEmployee {
 		}
 		
 	}
-	
-	public static List<Employees> listEmployees() {
-		EmployeesDao empDao = DaoFactory.createEmployeesDao();
-		List<Employees> list = empDao.findAll();
-		return list;
-	}
-	
-	public static void SalaryMax(List<Employees> l, double salary) {
-		List<Employees> salaryMax = l.stream().
-				filter(e -> e.getSalary() > salary).
-				toList();
-		
-		salaryMax.forEach(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void SearchEmail (List<Employees> l, String email) {
-		
-		Optional<Employees> employeeEmail = l.stream().
-				filter(e -> e.getEmail().equals(email)).
-				findFirst();
-		employeeEmail.ifPresent(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void MaxSalary (List<Employees> l) {
-		Optional<Employees> maxSalary = l.stream().
-				max(Comparator.comparing(Employees::getSalary));
-		
-		maxSalary.ifPresent(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void AvarageSalary (List<Employees> l) {
-		OptionalDouble avgSalary = l.stream().
-				mapToDouble(Employees::getSalary).
-				average();
-			
-			avgSalary.ifPresent(System.out::println);
-			System.out.println();
-			System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void SumSalarys (List<Employees> l) {
-		double sumSalary = l.stream().
-				map(Employees::getSalary).
-				reduce(0.0, (x,y) -> x+y);
-		System.out.print("Soma dos salarios: ");
-		System.out.println(sumSalary);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void OrdenedEmployees (List<Employees> l) {
-		List<Employees> namesOrdened = l.stream().
-				sorted(Comparator.comparing(Employees::getName)).
-				toList();
-		
-		namesOrdened.forEach(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void OrdenedSalary (List<Employees> l) {
-		List<Employees> salaryOrdened = l.stream().
-				sorted(Comparator.comparing(Employees::getSalary).reversed()).
-				toList();
-		
-		salaryOrdened.forEach(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-	
-	public static void Emails (List<Employees> l) {
-		List<String> emails = l.stream().
-				map(Employees::getEmail).
-				toList();
-		
-		emails.forEach(System.out::println);
-		System.out.println();
-		System.out.println("Pressione enter para continuar");
-	}
-
 }
